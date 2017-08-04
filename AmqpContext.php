@@ -146,7 +146,7 @@ class AmqpContext implements InteropAmqpContext
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_AUTODELETE),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_INTERNAL),
             (bool) ($topic->getFlags() & InteropAmqpTopic::FLAG_NOWAIT),
-            $topic->getArguments()
+            $topic->getArguments() ? new AMQPTable($topic->getArguments()) : null
         );
     }
 
