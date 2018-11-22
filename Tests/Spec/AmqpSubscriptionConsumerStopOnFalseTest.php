@@ -3,33 +3,40 @@
 namespace Enqueue\AmqpLib\Tests\Spec;
 
 use Enqueue\AmqpLib\AmqpConnectionFactory;
-use Enqueue\AmqpLib\AmqpContext;
+use Interop\Amqp\AmqpContext;
+use Interop\Amqp\AmqpQueue;
 use Interop\Queue\Context;
-use Interop\Queue\Spec\SendAndReceiveTimeToLiveMessagesFromQueueSpec;
+use Interop\Queue\Spec\SubscriptionConsumerStopOnFalseSpec;
 
 /**
  * @group functional
  */
-class AmqpSendAndReceiveTimeToLiveMessagesFromQueueTest extends SendAndReceiveTimeToLiveMessagesFromQueueSpec
+class AmqpSubscriptionConsumerStopOnFalseTest extends SubscriptionConsumerStopOnFalseSpec
 {
     /**
+     * @return AmqpContext
+     *
      * {@inheritdoc}
      */
     protected function createContext()
     {
         $factory = new AmqpConnectionFactory(getenv('AMQP_DSN'));
 
-        return $factory->createContext();
+        $context = $factory->createContext();
+        $context->setQos(0, 5, false);
+
+        return $context;
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param AmqpContext $context
+     *
+     * {@inheritdoc}
      */
     protected function createQueue(Context $context, $queueName)
     {
-        $queue = $context->createQueue($queueName);
+        /** @var AmqpQueue $queue */
+        $queue = parent::createQueue($context, $queueName);
         $context->declareQueue($queue);
         $context->purgeQueue($queue);
 
