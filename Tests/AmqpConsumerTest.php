@@ -27,9 +27,11 @@ class AmqpConsumerTest extends TestCase
 
     public function testCouldBeConstructedWithContextAndQueueAsArguments()
     {
-        new AmqpConsumer(
-            $this->createContextMock(),
-            new AmqpQueue('aName')
+        self::assertInstanceOf(AmqpConsumer::class,
+            new AmqpConsumer(
+                $this->createContextMock(),
+                new AmqpQueue('aName')
+            )
         );
     }
 
@@ -68,15 +70,13 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_ack')
-            ->with(167)
-        ;
+            ->with(167);
 
         $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('getLibChannel')
-            ->willReturn($channel)
-        ;
+            ->willReturn($channel);
 
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
@@ -92,15 +92,13 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_reject')
-            ->with(125, $this->isTrue())
-        ;
+            ->with(125, $this->isTrue());
 
         $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('getLibChannel')
-            ->willReturn($channel)
-        ;
+            ->willReturn($channel);
 
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
@@ -124,21 +122,18 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_get')
-            ->willReturn($libMessage)
-        ;
+            ->willReturn($libMessage);
 
         $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('getLibChannel')
-            ->willReturn($channel)
-        ;
+            ->willReturn($channel);
         $context
             ->expects($this->once())
             ->method('convertMessage')
             ->with($this->identicalTo($libMessage))
-            ->willReturn($message)
-        ;
+            ->willReturn($message);
 
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
@@ -160,21 +155,18 @@ class AmqpConsumerTest extends TestCase
         $channel
             ->expects($this->once())
             ->method('basic_get')
-            ->willReturn($libMessage)
-        ;
+            ->willReturn($libMessage);
 
         $context = $this->createContextMock();
         $context
             ->expects($this->once())
             ->method('getLibChannel')
-            ->willReturn($channel)
-        ;
+            ->willReturn($channel);
         $context
             ->expects($this->once())
             ->method('convertMessage')
             ->with($this->identicalTo($libMessage))
-            ->willReturn($message)
-        ;
+            ->willReturn($message);
 
         $consumer = new AmqpConsumer($context, new AmqpQueue('aName'));
 
