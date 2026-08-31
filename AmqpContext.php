@@ -162,7 +162,7 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
 
     public function declareQueue(InteropAmqpQueue $queue): int
     {
-        list(, $messageCount) = $this->getLibChannel()->queue_declare(
+        list($queueName, $messageCount) = $this->getLibChannel()->queue_declare(
             $queue->getQueueName(),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_PASSIVE),
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_DURABLE),
@@ -171,6 +171,16 @@ class AmqpContext implements InteropAmqpContext, DelayStrategyAware
             (bool) ($queue->getFlags() & InteropAmqpQueue::FLAG_NOWAIT),
             $queue->getArguments() ? new AMQPTable($queue->getArguments()) : null
         );
+        /*
+         * The queue name could have been entered as empty string, and come out in a format similar to:
+         * amq.gen-LQTh8IdojOCrvOnEuFog8w. The format of the automatically generated name is not in the spec, but the
+         * automatic generation is part of the amqp specification:
+         * https://www.rabbitmq.com/resources/specs/amqp0-9-1.xml (see methods declare and declare-ok)
+         */
+        if ($queueName) {
+            $queue->setQueueName($queueName);
+        }
+
 
         return $messageCount ?? 0;
     }
